@@ -101,4 +101,99 @@ https://www.arduino.cc/en/Main/Standalone. And here's a pretty nice
 long forum discussion about exactly the kind of boards I'd purchased:
 https://forum.arduino.cc/index.php?topic=138611.0 .
 
+## First attempt
+
+I hooked up an ATmega328 on the breadboard with the FTDI USB breakout
+and tried loading `Blink` on it. This didn't work. Many things could
+be wrong: the microcontroller could be dead, it might not have the
+bootloader on it (even though it was sold as having the bootloader),
+the bootloader might be corrupted, the FTDI breakout board could be
+bad, my USB cable could be bad, the Arduino IDE could be calling
+`avrdude` with bad parameters for this FTDI board. And so on.
+
+The fact that my Arduino Uno has a removable atmega328 will make
+debugging this a lot easier. I flashed `Blink` on that one and then
+transferred it to the breadboard. I removed everything but `V_cc` and
+`GND` coming from the USB board, and connected the cable. It blinked!
+
+This eliminates the following possibilities: crystal is bad, no power
+coming from USB board, power from USB is too noisy, crystal capacitors
+are bad, blinking LED is bad. That's not much, in fact I knew all of
+those except the crystal and crystal caps just from multimeter testing
+earlier.
+
+## Reset pulse
+
+I can get the upload to work by taking the wire that goes to RESET on
+the atmega and holding it to ground, then letting it go at the right
+moment. I can also get upload to work by unplugging and replugging the
+USB cable in time with pressing the upload command. So something is
+wrong with the capacitor I have inline with RESET and DTR.
+
+But something could be wrong with the USB breakout board, or with my
+circuit. I'm glad I had the foresight to buy two different kinds of
+USB breakout board, even though I got eight of the cheap(er) ones and
+only one of the more expensive ($1.99 vs. $1.79) boards. I hooked up
+the other board and tried. Same problem! Same timing finickiness with
+the RESET and DTR lines.
+
+Something is probably wrong with my circuit, then. Makes sense! I'm
+the weakest link in the chain, an electronics noob who's too impatient
+to read documentation until a problem occurs. 
+
+Let's read the docs and think about this for a second. RESET is
+supposed to be an active low pin, which means it needs to be held up
+usually. 
+		
+
+Okay, I have figured it out. On the FTDI board, the DTR pin is being
+held LOW all the time. Instead, it needs to be held HIGH and then made
+LOW during communication. Combined with our resistor and capacitor
+assembly, this will pulse the RESET pin of the chip and run the
+bootloader.
+
+This is what the $2 board is doing. Hmm, now is there maybe some other
+pin on the FTDI board that is held HIGH and then made low during
+transmission?
+
+Another possibility is that DTR is being held LOW and then made HIGH
+during transmission.
+
+Aha, it seems like both RTS and DTR start out HIGH, then go LOW for
+the first upload, but then stay LOW! So any subsequent tranmissions
+fail.
+
+I tried using avrdude instead of the Arduino IDE. I tried playing with
+avrdude settings to see if I could get it to force DTR back to HIGH
+after the transmission was over. But no luck.
+
+This really seems like a driver issue. Ultimately the driver controls
+whether DTR is HIGH or LOW during transmission and when idle. Since
+I'm a spoilt Mac user, I never restart my computer even after
+installing drivers or other OS-level software. But it's possible this
+niche driver is not as friendly as other OS X software. A restart
+could help...
+
+... and it did! Now I have a fully functional breadboarded Arduino
+that I can solder up with an 8-pin socket to create my ATtiny
+programmer!
+
+And the first damn thing I'm going to have to do after flashing
+ArduinoISP is permanently disabling RESET on the main chip. Hmm ... I
+guess I could have foregone that whole debugging exercise. But fully
+understanding the bug feels pretty good, and the whole thing
+solidified my knowledge of something as basic as a capacitor. A
+capacitor turns a transition into a pulse! That's something I kinda
+knew before, but now it feels real.
+
+To elaborate on that: prviously, if you had asked me "Does a series
+capacitor turn a transition into a pulse?" I would have thought about
+it for a bit and then probably (hopefully) said Yes. But if I was in
+the situation of needing a pulse, I would not have thought "Hmm, I
+know I can get a pulse from a transition by just adding a series
+capacitor, so is the reduced problem of needing a transition any
+easier?" That's the difference, and it's important because it's such a
+general thing that it's sure to come up again.
+
+So debugging this pointless issue was actually well worth my time.
 
