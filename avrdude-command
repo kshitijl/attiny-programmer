@@ -1,0 +1,1 @@
+avrdude -c stk500v1 -p atmega328p -D -F -P /dev/cu.usbserial-00000000 -U flash:w:blink.hex
