@@ -1,0 +1,1 @@
+avrdude -p atmega328 -c arduino -b 19200 -U flash:w:/Applications/Arduino.app/Contents/Java/hardware/arduino/avr/bootloaders/atmega/ATmegaBOOT_168_atmega328_pro_8MHz.hex -P /dev/cu.usbserial-00000000 -F -D -e -v

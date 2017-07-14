@@ -1,0 +1,1 @@
+avrdude -c arduino -p atmega328p -D -F -P /dev/cu.usbmodem1421 -b 19200
