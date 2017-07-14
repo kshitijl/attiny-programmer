@@ -197,3 +197,36 @@ general thing that it's sure to come up again.
 
 So debugging this pointless issue was actually well worth my time.
 
+## Bootloader burning
+
+https://wolfpaulus.com/tag/arduino/page/2/
+
+It seems crazy that the bootloader is 32670 bytes! Of course avrdude
+reports an error at byte 0x7e00.
+
+Had to set fuses. Learned about that from here:
+https://wolfpaulus.com/tag/arduino/page/2/
+
+Had to edit boards.txt to turn 0x05 to 0xFD. This is because only the
+lowest 3 bits of efuse are writable. The rest stay at one.
+
+Had to use menu option "Upload using programmer."
+
+After burning bootloader, do NOT "upload using programmer" another
+sketch. Directly take the newly bootloader-burned atmega and stick it
+in the Arduino for testing. This finally worked. Now I can repeatably
+burn the bootloader on fresh ATmega328p chips.
+
+But I don't want to permanently solder in my 16MHz crystal for my
+ATtiny programmer. For that, I will need to set the correct fuses  ...
+Looks like I shouldn't do this because I need accurate timing for
+serial USB communication. Ok.
+
+## The programmer on a breadboard
+
+This was a matter of connecting up http://highlowtech.org/?p=1706 and
+the Arduino pin mapping.
+
+One final problem, which was that I had to tell the Arduino 1Mhz
+internal clock rather than 8Mhz. I suppose it's "burn bootloader"'s
+job to set fuses that tell the ATtiny which clock to use. Let's try that.
