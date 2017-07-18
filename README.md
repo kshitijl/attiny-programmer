@@ -230,3 +230,26 @@ the Arduino pin mapping.
 One final problem, which was that I had to tell the Arduino 1Mhz
 internal clock rather than 8Mhz. I suppose it's "burn bootloader"'s
 job to set fuses that tell the ATtiny which clock to use. Let's try that.
+
+## Detailed steps to getting blink working on an ATTiny85
+
+This is using the Arduino as ISP with my ATtiny shield v2.
+
+1. Plug shield in. On one side pins go into Reset thru GND. On the
+other side pins go from 9 thru GND.
+
+2. Switch should be in position AWAY from capacitor.
+
+3. Use Arduino IDE to upload the ArduinoISP sketch, selecting Board =
+Arduino/Genuino Uno and Programmer = AVR ISP.
+
+4. Move switch to other position (TOWARDS capacitor).
+
+5. Run
+	 avrdude -p attiny85 -c arduino -P /dev/cu.usbmodem1411 -b 19200 -U flash:w:blink-attiny85.hex
+
+6. Pull ATtiny85 out and put it on the breadboard. On the shield, GND
+and 5v are exposed. The pin closer to the capacitor is GND.
+
+7. Led +ve side (long side, with resistor) goes in Pin 2, Led -ve side
+(short side) goes on Pin 4 which is GND. 5v goes to Pin 8.
