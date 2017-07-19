@@ -253,3 +253,52 @@ and 5v are exposed. The pin closer to the capacitor is GND.
 
 7. Led +ve side (long side, with resistor) goes in Pin 2, Led -ve side
 (short side) goes on Pin 4 which is GND. 5v goes to Pin 8.
+
+## Minimal ATmega328p/Arduino on a breadboard
+
+1. Using your normal Arduino board, load up blink.
+
+2. Remove the ATmega328p from the board.
+
+3. Connect it up on a breadboard: 5v to pin 7, GND to pin 8, crystal
+on pins 9 and 10; LED +ve side on pin 19, -ve side on GND. This works
+for me (even without capacitors on the crystal).
+
+## Steps to making attiny-programmer
+
+1. Set up a bare 328p on a breadboard.
+
+2. Set up MCUdude's MiniCore.
+
+3. Load up ArduinoISP on your regular Arduino.
+
+4. Connect it to the 328p on the breadboard: VCC and GND to the VCC
+and GND lanes; 17, 18, 19 on the 328p to 11, 12, 13 on the Arduino; 1
+on the 328p to 10 on the Arduino.
+
+5. Put a big cap on the Arduino: long leg (+ve) on reset, short leg
+(-ve) to GND.
+
+6. Select Tools-> and set all the board options: 328p, 12Mhz external,
+Arduino as ISP.
+
+7. Burn bootloader.
+
+8. Disconnect the Arduino.
+
+9. Connect the FTDI on the breadboard. GND and VCC lanes to GND and
+VCC lanes on the breadboard. TX to 328p pin 2, RX to 328p pin 3, 0.1uF
+capacitor between DTR on the FTDI and RESET (pin 1) on the 328p.
+
+10. Upload a sketch, repeatedly touching the reset resistor to GND.
+This should work. Upload the Arduino as ISP sketch.
+
+11. Remove the capacitor between DTR and RESET.
+
+12. Connect the ATtiny85 to the 328p: 16, 17, 18, 19 on 328p to 1, 5,
+6, 7 on the tiny85. Also, tiny85 4 and 8 to GND and 5v.
+
+13. Should now be able to upload, using either Arduino IDE or just
+avrdude. Make sure to select tiny85, internal 8 or 1 MHz, Arduino as
+ISP. #define LED_BUILTIN 3 and connect LED long leg (+ve) to tiny85
+pin 2.
