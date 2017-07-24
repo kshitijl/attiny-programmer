@@ -302,3 +302,13 @@ This should work. Upload the Arduino as ISP sketch.
 avrdude. Make sure to select tiny85, internal 8 or 1 MHz, Arduino as
 ISP. #define LED_BUILTIN 3 and connect LED long leg (+ve) to tiny85
 pin 2.
+
+## Notes
+
+"Burn bootloader" is a dangerous operation. I bricked one ATTiny85
+like this. I think it's because it sets the fuses that set whether
+it's on an internal or external clock; or maybe the fuse that says
+whether the RESET pin works.
+
+I should be able to fix this with a high-voltage programmer, or ... by
+connecting up a crystal? The same crystal that's on my proto-board?
