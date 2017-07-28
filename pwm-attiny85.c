@@ -13,8 +13,8 @@ int main (void)
   // would you want that? Maybe to control the frequency as well as
   // duty cycle.
   TCCR0A = (1 << COM0A1) | (1 << WGM00);
-  TCCR0B = (1 << CS00);
-  OCR0A  = 50;
+  TCCR0B = (1 << CS01);
+  OCR0A  = 150;
   
   while (1) {
   }
