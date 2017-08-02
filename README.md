@@ -303,6 +303,16 @@ avrdude. Make sure to select tiny85, internal 8 or 1 MHz, Arduino as
 ISP. #define LED_BUILTIN 3 and connect LED long leg (+ve) to tiny85
 pin 2.
 
+## Fuse settings
+
+http://www.engbedded.com/fusecalc
+
+For 8MHz internal clock:
+-U lfuse:w:0xe2:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+
+For 1MHz internal clock:
+-U lfuse:w:0x62:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
+
 ## Notes
 
 "Burn bootloader" is a dangerous operation. I bricked one ATTiny85
